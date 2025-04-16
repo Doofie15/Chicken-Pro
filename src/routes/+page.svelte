@@ -12,6 +12,33 @@
   import MortalityWidget from '../components/dashboard/MortalityWidget.svelte';
   import MarketPricesWidget from '../components/dashboard/MarketPricesWidget.svelte';
   
+  // Modal states for feed and mortality forms
+  let showFeedModal = false;
+  let showMortalityModal = false;
+  
+  // Handle batch form submission
+  function handleBatchSubmit(event) {
+    const batchData = event.detail;
+    console.log('New batch created:', batchData);
+    // In a real app, this would send the data to an API
+    // and update the active flocks list
+    
+    // For demo purposes, we'll add it to the active flocks
+    // Note: In a real app, this would be handled by a store or API call
+    // We're just simulating the behavior here
+    
+    // Close the modal
+    // showBatchModal = false;
+    
+    // Show success message
+    alert(`Batch ${batchData.name} created successfully!`);
+  }
+  
+  // Handle batch form cancellation
+  function handleBatchCancel() {
+    // showBatchModal = false;
+  }
+  
   // Sample data - in a real app, this would come from an API
   const stats = [
     { 
@@ -48,7 +75,7 @@
     }
   ];
   
-  const activeFlocks = [
+  let activeFlocks = [
     {
       id: 'B-2023-45',
       name: 'Batch 45',
@@ -201,15 +228,15 @@
       <p class="dashboard-subtitle">Here's what's happening with your farm today</p>
     </div>
     <div class="dashboard-actions">
-      <button class="btn btn-primary">
+      <a href="/flock/add" class="btn btn-primary">
         <span class="material-icons">add</span>
         Add New Batch
-      </button>
-      <button class="btn btn-success ms-2">
+      </a>
+      <button class="btn btn-success ms-2" on:click={() => showFeedModal = true}>
         <span class="material-icons">grass</span>
         Add Feed
       </button>
-      <button class="btn btn-danger ms-2">
+      <button class="btn btn-danger ms-2" on:click={() => showMortalityModal = true}>
         <span class="material-icons">monitor_heart</span>
         Log Mortality
       </button>
@@ -532,3 +559,5 @@
     height: 32px;
   }
 </style>
+
+<!-- No modals for batch form as it's now a separate page -->

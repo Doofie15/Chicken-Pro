@@ -8,10 +8,11 @@
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "sourceMap": true,
-    "strict": false,
+    "strict": true,
     "moduleResolution": "NodeNext",
-    "module": "ESNext",
+    "module": "NodeNext",
     "target": "ESNext",
+    "useDefineForClassFields": true,
     "verbatimModuleSyntax": true
   }
 }

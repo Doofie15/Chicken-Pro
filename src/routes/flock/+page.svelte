@@ -2,8 +2,12 @@
   import { onMount } from 'svelte';
   import ActiveFlockCard from '../../components/flock/ActiveFlockCard.svelte';
   
+  // Modal states for feed and mortality
+  let showFeedModal = false;
+  let showMortalityModal = false;
+  
   // Sample data - in a real app, this would come from an API
-  const activeFlocks = [
+  let activeFlocks = [
     {
       id: 'B-2023-45',
       name: 'Batch 45',
@@ -116,15 +120,15 @@
     </div>
     
     <div class="page-actions">
-      <button class="btn btn-primary">
+      <a href="/flock/add" class="btn btn-primary">
         <span class="material-icons">add</span>
         Add New Batch
-      </button>
-      <button class="btn btn-success ms-2">
+      </a>
+      <button class="btn btn-success ms-2" on:click={() => showFeedModal = true}>
         <span class="material-icons">grass</span>
         Add Feed
       </button>
-      <button class="btn btn-danger ms-2">
+      <button class="btn btn-danger ms-2" on:click={() => showMortalityModal = true}>
         <span class="material-icons">monitor_heart</span>
         Log Mortality
       </button>
@@ -517,3 +521,5 @@
     }
   }
 </style>
+
+<!-- No modals for batch form as it's now a separate page -->
