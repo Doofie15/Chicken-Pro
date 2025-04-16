@@ -41,13 +41,24 @@ The dashboard provides an overview of your farm's current status.
 ### Widgets
 
 - **Performance Chart**: Shows growth performance of active flocks
-- **Recent Tasks**: Displays upcoming and overdue tasks
-- **Alerts**: Shows important notifications and alerts
+- **Active Flocks**: Displays current batches with key metrics and status
+- **Recent Activity**: Tracks recent actions taken on the farm
+- **Feed Inventory**: Monitors feed quantities, costs, and recent deliveries
+- **Mortality Tracking**: Tracks bird losses and mortality trends
+- **Market Prices**: Shows chicken prices at major South African retailers
 - **Financial Summary**: Provides financial metrics and recent transactions
+- **Weather Conditions**: Displays current farm weather data
+- **Alerts**: Shows important notifications and alerts
 
 ## Flock Management
 
-The flock management section allows you to track and manage all your flocks.
+The flock management section allows you to track and manage all your broiler batches.
+
+### Quick Actions
+
+- **Add New Batch**: Create a new batch record
+- **Add Feed**: Quickly record feed additions
+- **Log Mortality**: Record bird losses and causes
 
 ### Viewing Flocks
 
@@ -147,6 +158,105 @@ Gain insights into your farm's performance.
 
 - Export charts and data for reporting
 - Download data in CSV format
+
+## Activity Tracking
+
+The activity tracking section helps you monitor all actions taken on the farm.
+
+### Activity Feed
+
+- View all recent activities in chronological order
+- Filter activities by type, user, or date range
+- Track vaccinations, feed updates, order processing, and data recording
+
+### Activity Details
+
+- User who performed the action
+- Action type and description
+- Timestamp and related batch information
+- Additional context and details
+
+## Feed Inventory Management
+
+The feed inventory section helps you track and manage all feed resources.
+
+### Feed Summary
+
+- Total feed given to all batches
+- Total feed costs and average price per kg
+- Current feed inventory levels by type
+
+### Feed Types
+
+- **Starter Feed**: For chicks in early growth stage
+- **Grower Feed**: For birds in main growth phase
+- **Finisher Feed**: For birds approaching market weight
+
+### Feed Tracking
+
+1. Click "Add Feed" button
+2. Select feed type and quantity
+3. Enter cost information
+4. Assign to specific batch (optional)
+5. Save feed record
+
+### Recent Deliveries
+
+- View recent feed deliveries with dates and quantities
+- Track feed costs and supplier information
+- Monitor feed usage patterns
+
+## Mortality Tracking
+
+The mortality tracking section helps you monitor and analyze bird losses.
+
+### Mortality Summary
+
+- Total birds lost across all batches
+- Average mortality rate
+- Weekly mortality trends
+
+### Mortality by Batch
+
+- View mortality rates for each active batch
+- Track mortality trends (increasing, decreasing, stable)
+- Compare batch performance
+
+### Logging Mortality
+
+1. Click "Log Mortality" button
+2. Select batch and number of birds
+3. Enter cause of mortality
+4. Add notes if needed
+5. Save mortality record
+
+### Recent Events
+
+- View recent mortality events with dates and causes
+- Track patterns in mortality causes
+- Identify potential health issues early
+
+## Market Price Analysis
+
+The market price section helps you track chicken prices and optimize your selling strategy.
+
+### Price Overview
+
+- Average chicken price per kg across major retailers
+- Price trends (increasing, decreasing, stable)
+- Individual retailer prices and changes
+
+### Pricing Algorithm
+
+- Optimal selling price based on current market conditions
+- Potential revenue projections
+- Price volatility analysis
+
+### Retailer Comparison
+
+- Compare prices across Shoprite, Pick n Pay, Woolworths, SPAR, and Checkers
+- Track price changes and trends by retailer
+- Identify best potential customers based on pricings
 
 ## Task Management
 

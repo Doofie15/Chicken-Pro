@@ -16,20 +16,6 @@
 </script>
 
 <div class="flock-card" class:warning={flock.status === 'warning'} class:danger={flock.status === 'danger'}>
-  <div class="flock-image" style="background-image: url({flock.image})">
-    <div class="flock-badge">
-      <span class="material-icons">
-        {#if flock.status === 'healthy'}
-          check_circle
-        {:else if flock.status === 'warning'}
-          warning
-        {:else}
-          error
-        {/if}
-      </span>
-      {flock.status}
-    </div>
-  </div>
   
   <div class="flock-content">
     <div class="flock-header">
@@ -111,142 +97,157 @@
 <style>
   .flock-card {
     display: flex;
-    background-color: white;
-    border-radius: 0;
+    border-radius: 8px;
     overflow: hidden;
-    border-bottom: 1px solid var(--gray-light);
+    margin-bottom: 16px;
     position: relative;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  
+  .flock-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
   }
   
   .flock-card:last-child {
-    border-bottom: none;
+    margin-bottom: 0;
   }
   
   .flock-card.warning {
-    background-color: rgba(255, 152, 0, 0.05);
+    border-left: 4px solid var(--warning);
   }
   
   .flock-card.danger {
-    background-color: rgba(244, 67, 54, 0.05);
+    border-left: 4px solid var(--danger);
   }
   
-  .flock-image {
-    width: 120px;
-    background-size: cover;
-    background-position: center;
-    position: relative;
-  }
-  
-  .flock-badge {
-    position: absolute;
-    top: 8px;
-    left: 8px;
-    background-color: rgba(0, 0, 0, 0.6);
-    color: white;
-    font-size: 12px;
-    padding: 4px 8px;
-    border-radius: 4px;
-    display: flex;
-    align-items: center;
-    text-transform: capitalize;
-  }
-  
-  .flock-badge .material-icons {
-    font-size: 14px;
-    margin-right: 4px;
-  }
+
   
   .flock-content {
     flex: 1;
-    padding: 16px;
+    padding: 16px 20px;
     position: relative;
+    background-color: white;
+    border-radius: 8px;
   }
   
   .flock-header {
     display: flex;
     justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 12px;
+    align-items: center;
+    margin-bottom: 16px;
   }
   
   .flock-name {
     margin: 0;
-    font-size: 18px;
-    font-weight: 500;
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--dark);
   }
   
   .flock-id {
     margin: 4px 0 0;
-    font-size: 12px;
+    font-size: 13px;
     color: var(--gray);
+    font-weight: 500;
   }
   
   .flock-age {
-    background-color: var(--primary);
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
     color: white;
-    border-radius: 4px;
-    padding: 4px 8px;
+    border-radius: 6px;
+    padding: 8px 12px;
     text-align: center;
     min-width: 60px;
+    box-shadow: 0 2px 4px rgba(25, 118, 210, 0.2);
   }
   
   .age-value {
-    font-size: 18px;
-    font-weight: 500;
+    font-size: 22px;
+    font-weight: 700;
     display: block;
+    line-height: 1;
   }
   
   .age-label {
-    font-size: 12px;
+    font-size: 11px;
     text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-top: 2px;
+    font-weight: 500;
   }
   
   .flock-progress {
-    margin-bottom: 16px;
+    margin-bottom: 20px;
   }
   
   .progress-info {
     display: flex;
     justify-content: space-between;
-    font-size: 12px;
-    margin-bottom: 4px;
+    margin-bottom: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--dark);
   }
   
   .progress-bar {
-    height: 6px;
-    background-color: var(--gray-light);
-    border-radius: 3px;
+    height: 8px;
+    background-color: #f0f0f0;
+    border-radius: 4px;
     overflow: hidden;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
   }
   
   .progress-fill {
     height: 100%;
-    background-color: var(--primary);
-    border-radius: 3px;
+    background: linear-gradient(90deg, var(--primary) 0%, var(--primary-light) 100%);
+    border-radius: 4px;
+    transition: width 0.5s ease;
   }
   
   .flock-stats {
     display: flex;
-    margin-bottom: 16px;
+    margin-bottom: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    padding: 12px;
   }
   
   .stat {
     flex: 1;
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
+    text-align: center;
+    padding: 0 8px;
+    position: relative;
+  }
+  
+  .stat:not(:last-child):after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 10%;
+    height: 80%;
+    width: 1px;
+    background-color: #e0e0e0;
   }
   
   .stat-label {
     font-size: 12px;
+    font-weight: 600;
     color: var(--gray);
-    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
   }
   
   .stat-value {
-    font-size: 16px;
-    font-weight: 500;
+    font-size: 18px;
+    font-weight: 600;
     color: var(--dark);
+    margin-bottom: 4px;
   }
   
   .stat-secondary {
@@ -297,22 +298,27 @@
   }
   
   .flock-forecast {
-    position: absolute;
-    bottom: 16px;
-    right: 16px;
-    font-size: 12px;
-    color: var(--primary);
     display: flex;
     align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--gray);
+    margin-top: 12px;
+    background-color: #f5f5f5;
+    padding: 10px;
+    border-radius: 6px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
   }
   
   .flock-forecast.ready {
-    color: var(--success);
+    color: white;
+    background: linear-gradient(90deg, var(--success) 0%, var(--success-light) 100%);
   }
   
   .flock-forecast .material-icons {
-    font-size: 14px;
-    margin-right: 4px;
+    font-size: 16px;
+    margin-right: 6px;
   }
   
   @media (max-width: 576px) {

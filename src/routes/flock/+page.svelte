@@ -118,7 +118,15 @@
     <div class="page-actions">
       <button class="btn btn-primary">
         <span class="material-icons">add</span>
-        New Flock
+        Add New Batch
+      </button>
+      <button class="btn btn-success ms-2">
+        <span class="material-icons">grass</span>
+        Add Feed
+      </button>
+      <button class="btn btn-danger ms-2">
+        <span class="material-icons">monitor_heart</span>
+        Log Mortality
       </button>
       <button class="btn btn-outline-secondary ms-2">
         <span class="material-icons">file_download</span>

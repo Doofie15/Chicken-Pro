@@ -3,11 +3,14 @@
   import DashboardStats from '../components/dashboard/DashboardStats.svelte';
   import ActiveFlockCard from '../components/flock/ActiveFlockCard.svelte';
   import PerformanceChart from '../components/dashboard/PerformanceChart.svelte';
-  import TaskList from '../components/dashboard/TaskList.svelte';
+  import ActivityWidget from '../components/dashboard/ActivityWidget.svelte';
   import CustomerOrdersWidget from '../components/dashboard/CustomerOrdersWidget.svelte';
   import FinancialSummary from '../components/dashboard/FinancialSummary.svelte';
   import WeatherWidget from '../components/dashboard/WeatherWidget.svelte';
   import AlertsWidget from '../components/dashboard/AlertsWidget.svelte';
+  import FeedInventoryWidget from '../components/dashboard/FeedInventoryWidget.svelte';
+  import MortalityWidget from '../components/dashboard/MortalityWidget.svelte';
+  import MarketPricesWidget from '../components/dashboard/MarketPricesWidget.svelte';
   
   // Sample data - in a real app, this would come from an API
   const stats = [
@@ -78,41 +81,46 @@
     }
   ];
   
-  const tasks = [
+  const activities = [
     {
-      id: 1,
-      title: 'Morning feed check - Batch 45',
-      priority: 'high',
-      due: 'Today, 8:00 AM',
-      completed: true
+      user: 'Dr. Sarah Johnson',
+      action: 'completed vaccination',
+      description: 'Completed vaccination for Batch 46 - all birds healthy',
+      time: '15m ago',
+      icon: 'medical_services',
+      iconColor: '#1976d2'
     },
     {
-      id: 2,
-      title: 'Vaccination - Batch 46',
-      priority: 'high',
-      due: 'Today, 10:00 AM',
-      completed: false
+      user: 'John Martinez',
+      action: 'updated feed inventory',
+      description: 'Added 2.5 tons of starter feed to inventory',
+      time: '42m ago',
+      icon: 'inventory_2',
+      iconColor: '#0288d1'
     },
     {
-      id: 3,
-      title: 'Water quality test',
-      priority: 'medium',
-      due: 'Today, 11:30 AM',
-      completed: false
+      user: 'Michael Chen',
+      action: 'processed new order',
+      description: 'New order from Metro Supermarket for 3,000 birds',
+      time: '1h ago',
+      icon: 'shopping_cart',
+      iconColor: '#7b1fa2'
     },
     {
-      id: 4,
-      title: 'Prepare Batch 44 for weighing',
-      priority: 'medium',
-      due: 'Today, 2:00 PM',
-      completed: false
+      user: 'Farm Manager',
+      action: 'approved expense report',
+      description: 'Monthly utility expenses approved for payment',
+      time: '3h ago',
+      icon: 'payments',
+      iconColor: '#0097a7'
     },
     {
-      id: 5,
-      title: 'Check ventilation systems',
-      priority: 'low',
-      due: 'Today, 4:00 PM',
-      completed: false
+      user: 'Robert Wilson',
+      action: 'recorded new flock data',
+      description: 'Batch 45 weight measurement: avg 1,520g, mortality 1.8%',
+      time: '4h ago',
+      icon: 'pets',
+      iconColor: '#388e3c'
     }
   ];
   
@@ -195,7 +203,15 @@
     <div class="dashboard-actions">
       <button class="btn btn-primary">
         <span class="material-icons">add</span>
-        New Flock
+        Add New Batch
+      </button>
+      <button class="btn btn-success ms-2">
+        <span class="material-icons">grass</span>
+        Add Feed
+      </button>
+      <button class="btn btn-danger ms-2">
+        <span class="material-icons">monitor_heart</span>
+        Log Mortality
       </button>
       <button class="btn btn-outline-secondary ms-2">
         <span class="material-icons">file_download</span>
@@ -241,7 +257,41 @@
       </div>
     </div>
     
-    <div class="grid-col-6 grid-col-md-12">
+    <div class="grid-col-8 grid-col-md-12">
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">Feed Inventory</h2>
+          <div class="card-actions">
+            <button class="btn-icon">
+              <span class="material-icons">refresh</span>
+            </button>
+            <a href="/inventory" class="btn-link ms-2">View Details</a>
+          </div>
+        </div>
+        <div class="card-body">
+          <FeedInventoryWidget />
+        </div>
+      </div>
+    </div>
+    
+    <div class="grid-col-4 grid-col-md-6 grid-col-sm-12">
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">Mortality Tracking</h2>
+          <div class="card-actions">
+            <button class="btn-icon">
+              <span class="material-icons">trending_down</span>
+            </button>
+            <a href="/mortality" class="btn-link ms-2">Details</a>
+          </div>
+        </div>
+        <div class="card-body">
+          <MortalityWidget />
+        </div>
+      </div>
+    </div>
+    
+    <div class="grid-col-4 grid-col-md-12">
       <div class="card">
         <div class="card-header">
           <h2 class="card-title">Active Flocks</h2>
@@ -257,16 +307,33 @@
       </div>
     </div>
     
-    <div class="grid-col-6 grid-col-md-12">
+    <div class="grid-col-4 grid-col-md-12">
       <div class="card">
         <div class="card-header">
-          <h2 class="card-title">Today's Tasks</h2>
+          <h2 class="card-title">Recent Activity</h2>
           <div class="card-actions">
-            <a href="/tasks" class="btn-link">View All</a>
+            <a href="/activity" class="btn-link">View All</a>
           </div>
         </div>
         <div class="card-body p-0">
-          <TaskList {tasks} />
+          <ActivityWidget activities={activities} />
+        </div>
+      </div>
+    </div>
+    
+    <div class="grid-col-4 grid-col-md-12">
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">Market Prices</h2>
+          <div class="card-actions">
+            <button class="btn-icon">
+              <span class="material-icons">refresh</span>
+            </button>
+            <a href="/market" class="btn-link ms-2">Analysis</a>
+          </div>
+        </div>
+        <div class="card-body">
+          <MarketPricesWidget />
         </div>
       </div>
     </div>

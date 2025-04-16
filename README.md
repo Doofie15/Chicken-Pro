@@ -1,6 +1,6 @@
 # BroilerPro - Broiler Farm Management System
 
-A comprehensive management system for broiler farms, built with SvelteKit, Bootstrap, and Material UI. BroilerPro helps farm managers track flocks, manage customers, monitor finances, analyze performance, and organize tasks in one unified platform.
+A comprehensive management system for broiler farms, built with SvelteKit, Bootstrap, and Material UI. BroilerPro helps farm managers track flocks, manage customers, monitor finances, analyze performance, track feed inventory, monitor mortality, and analyze market prices in one unified platform.
 
 ![BroilerPro Dashboard](docs/screenshots/dashboard.png)
 
@@ -9,13 +9,18 @@ A comprehensive management system for broiler farms, built with SvelteKit, Boots
 ### Dashboard
 - Visual overview of key farm metrics
 - Active flocks monitoring with health status
-- Upcoming tasks and alerts
+- Recent activity tracking
+- Feed inventory management
+- Mortality tracking with trends
+- South African market price analysis
 - Financial summaries and recent transactions
 - Interactive charts and graphs
 
 ### Flock Management
 - Detailed view of active flocks
 - Growth tracking and performance metrics
+- Batch-based organization
+- Quick actions for feed and mortality logging
 - Mortality rate monitoring
 - Feed conversion ratio analysis
 - Filtering and sorting capabilities
@@ -39,11 +44,31 @@ A comprehensive management system for broiler farms, built with SvelteKit, Boots
 - Feed conversion ratio tracking
 - Weight distribution visualization
 
-### Task Management
-- Task list with priorities and categories
-- Task assignment and tracking
-- Due date management
-- Filtering and sorting options
+### Activity Tracking
+- Recent farm activities monitoring
+- User action history
+- Categorized activity types
+- Timestamp tracking
+- Quick access to activity details
+
+### Feed Inventory Management
+- Track feed quantities by type (starter, grower, finisher)
+- Monitor feed costs and usage
+- Recent feed deliveries tracking
+- Feed inventory visualization
+
+### Mortality Tracking
+- Monitor bird losses by batch
+- Track mortality causes
+- Visualize mortality trends
+- Quick mortality logging
+
+### Market Price Analysis
+- Track chicken prices at major South African retailers
+- Price trend monitoring
+- Optimal pricing algorithm
+- Revenue projection tools
+- Price volatility analysis
 
 ### Settings
 - Farm profile configuration
