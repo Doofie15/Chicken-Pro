@@ -4,6 +4,9 @@ A comprehensive management system for broiler farms, built with SvelteKit, Boots
 
 ## Latest Updates (April 2025)
 
+- **Enhanced Customer Form UI**: Redesigned customer form with improved layout, document upload functionality, and Google Maps integration for address autocomplete
+- **Customer Self-Registration**: Added ability to generate unique links for customers to self-register their information
+- **VAT Number Field**: Added VAT number field to billing information for improved invoice processing
 - **Enhanced Batch Management Form**: Streamlined form with improved supplier and weather information cards
 - **Automatic Weather Data Collection**: Weather conditions are now automatically recorded upon batch creation
 - **Supplier Distance Calculation**: Travel distance from suppliers is now calculated and displayed for analysis
@@ -35,10 +38,14 @@ A comprehensive management system for broiler farms, built with SvelteKit, Boots
 - Supplier distance tracking for logistics analysis
 
 ### Customer Relationship Management
-- Customer profiles with contact information
-- Order history and preferences
-- Customer type categorization
-- Filtering and search functionality
+- Customer profiles with comprehensive contact information
+- Individual and company customer types with appropriate fields
+- Google Maps integration for address autocomplete and validation
+- Customer self-registration via secure unique links
+- Document upload functionality for customer files
+- Separate billing information with VAT number support
+- Order history and preferences tracking
+- Advanced filtering and search functionality
 
 ### Financial Tracking
 - Revenue and expense monitoring

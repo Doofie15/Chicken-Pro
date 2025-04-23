@@ -1,5 +1,6 @@
 <script>
   import { onMount } from 'svelte';
+  import { goto } from '$app/navigation';
   
   // Sample data - in a real app, this would come from an API
   const customers = [
@@ -82,6 +83,34 @@
     avgOrderValue: Math.round(customers.reduce((sum, c) => sum + c.totalSpend, 0) / customers.reduce((sum, c) => sum + c.totalOrders, 0))
   };
   
+  // Self-registration link state
+  let registrationLink = '';
+  let showRegistrationModal = false;
+  let linkCopied = false;
+  
+  // Generate a registration token and link
+  function generateRegistrationLink() {
+    // In a real app, this would call an API to generate a secure token
+    const token = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+    registrationLink = `${window.location.origin}/customers/register/${token}`;
+    showRegistrationModal = true;
+  }
+  
+  // Copy registration link to clipboard
+  function copyRegistrationLink() {
+    navigator.clipboard.writeText(registrationLink).then(() => {
+      linkCopied = true;
+      setTimeout(() => {
+        linkCopied = false;
+      }, 2000);
+    });
+  }
+  
+  // Close the modal
+  function closeModal() {
+    showRegistrationModal = false;
+  }
+  
   let filterType = 'all';
   let filterStatus = 'all';
   let searchQuery = '';
@@ -145,9 +174,13 @@
     </div>
     
     <div class="page-actions">
-      <button class="btn btn-primary">
+      <button class="btn btn-primary" on:click={() => goto('/customers/add')}>
         <span class="material-icons">person_add</span>
         Add Customer
+      </button>
+      <button class="btn btn-outline-primary ms-2" on:click={generateRegistrationLink}>
+        <span class="material-icons">link</span>
+        Self-Registration Link
       </button>
       <button class="btn btn-outline-secondary ms-2">
         <span class="material-icons">file_download</span>
@@ -328,6 +361,41 @@
     </div>
   </div>
 </div>
+
+<!-- Registration Link Modal -->
+{#if showRegistrationModal}
+<div class="modal-overlay">
+  <div class="modal-container">
+    <div class="modal-header">
+      <h3>Customer Self-Registration Link</h3>
+      <button class="modal-close" on:click={closeModal}>
+        <span class="material-icons">close</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <p>Share this link with your customer to allow them to register and update their information:</p>
+      <div class="registration-link-container">
+        <div class="registration-link">
+          <span class="link-text">{registrationLink}</span>
+          <button class="btn btn-sm btn-outline-secondary" on:click={copyRegistrationLink}>
+            <span class="material-icons">{linkCopied ? 'check' : 'content_copy'}</span>
+          </button>
+        </div>
+      </div>
+      {#if linkCopied}
+        <div class="alert alert-success mt-2">
+          <span class="material-icons">check_circle</span>
+          Link copied to clipboard!
+        </div>
+      {/if}
+      <p class="modal-note">This link will allow the customer to fill in their own information without needing to create an account.</p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-primary" on:click={closeModal}>Done</button>
+    </div>
+  </div>
+</div>
+{/if}
 
 <style>
   .customers-page {
@@ -618,6 +686,114 @@
   .empty-state p {
     margin: 0 0 16px;
     font-size: 16px;
+  }
+  
+  /* Modal styles */
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+  
+  .modal-container {
+    background-color: white;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 600px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    border-bottom: 1px solid #e0e0e0;
+  }
+  
+  .modal-header h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+  }
+  
+  .modal-close {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #666;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px;
+  }
+  
+  .modal-body {
+    padding: 20px;
+  }
+  
+  .modal-footer {
+    padding: 16px 20px;
+    border-top: 1px solid #e0e0e0;
+    display: flex;
+    justify-content: flex-end;
+  }
+  
+  .registration-link-container {
+    margin-top: 12px;
+    margin-bottom: 16px;
+  }
+  
+  .registration-link {
+    display: flex;
+    align-items: center;
+    background-color: #f5f5f5;
+    padding: 10px 12px;
+    border-radius: 4px;
+    border: 1px solid #e0e0e0;
+  }
+  
+  .link-text {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-family: monospace;
+    font-size: 14px;
+  }
+  
+  .modal-note {
+    font-size: 14px;
+    color: #666;
+    margin-top: 16px;
+  }
+  
+  .alert {
+    display: flex;
+    align-items: center;
+    padding: 8px 12px;
+    border-radius: 4px;
+    margin-top: 8px;
+  }
+  
+  .alert-success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+  }
+  
+  .alert .material-icons {
+    margin-right: 8px;
+    font-size: 18px;
   }
   
   @media (max-width: 992px) {

@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import { createEventDispatcher } from 'svelte';
   import { onMount } from 'svelte';
   
@@ -91,7 +91,18 @@
   ];
   
   // Supplier data with details (would normally come from a database)
-  const suppliers = {
+  type SupplierInfo = {
+    address: string;
+    contact: string;
+    email: string;
+    coordinates: { lat: number; lng: number };
+  };
+
+  type SuppliersType = {
+    [key: string]: SupplierInfo;
+  };
+
+  const suppliers: SuppliersType = {
     'National Chicks': {
       address: '25 Main Road, Pretoria, 0001',
       contact: '+27 12 345 6789',
@@ -125,7 +136,17 @@
   };
   
   // Default vaccination schedules by supplier (would normally come from a database)
-  const vaccinationSchedules = {
+  type VaccinationItem = {
+    name: string;
+    dayNumber: number;
+    completed: boolean;
+  };
+
+  type VaccinationSchedulesType = {
+    [key: string]: VaccinationItem[];
+  };
+
+  const vaccinationSchedules: VaccinationSchedulesType = {
     'National Chicks': [
       { name: 'Newcastle Disease', dayNumber: 7, completed: false },
       { name: 'Infectious Bronchitis', dayNumber: 14, completed: false },
@@ -151,8 +172,7 @@
   };
   
   // Selected supplier details
-  /** @type {Object|null} */
-  let selectedSupplier = null;
+  let selectedSupplier: SupplierInfo | null = null;
   let travelDistance = 0;
   
   /**
@@ -161,7 +181,7 @@
    * @param {{lat: number, lng: number}} coord2 - Second coordinates {lat, lng}
    * @returns {number} Distance in kilometers
    */
-  function calculateDistance(coord1, coord2) {
+  function calculateDistance(coord1: {lat: number, lng: number}, coord2: {lat: number, lng: number}): number {
     const R = 6371; // Earth's radius in km
     const dLat = (coord2.lat - coord1.lat) * Math.PI / 180;
     const dLon = (coord2.lng - coord1.lng) * Math.PI / 180;
@@ -178,10 +198,12 @@
     const supplierName = batchData.sourceHatchery;
     if (supplierName && Object.prototype.hasOwnProperty.call(suppliers, supplierName)) {
       selectedSupplier = suppliers[supplierName];
-      travelDistance = calculateDistance(
-        selectedSupplier.coordinates,
-        farmLocation.coordinates
-      );
+      if (selectedSupplier) {
+        travelDistance = calculateDistance(
+          selectedSupplier.coordinates,
+          farmLocation.coordinates
+        );
+      }
     } else {
       selectedSupplier = null;
       travelDistance = 0;
@@ -189,8 +211,8 @@
   }
   
   // Update vaccination schedule when supplier changes
-  function updateVaccinationSchedule(supplier) {
-    if (vaccinationSchedules[supplier]) {
+  function updateVaccinationSchedule(supplier: string) {
+    if (supplier && vaccinationSchedules[supplier]) {
       batchData.vaccinationSchedule = [...vaccinationSchedules[supplier]];
     }
     updateSupplierDetails();
@@ -198,11 +220,9 @@
   
   // Initialize form data and state variables
   let showVaccinationSection = false;
-  /** @type {File[]} */
-  let uploadedFiles = [];
-  let weatherLoading = false;
-  /** @type {string|null} */
-  let weatherError = null;
+  let uploadedFiles: File[] = [];
+  let fetchingWeather = false;
+  let weatherError: string | null = null;
   
   // Weight calculation functions
   function calculateTotalWeight() {
@@ -223,7 +243,7 @@
    * Fetch current weather data for the farm location
    */
   async function fetchWeatherData() {
-    weatherLoading = true;
+    fetchingWeather = true;
     weatherError = null;
     
     try {
@@ -243,11 +263,11 @@
       // Update batch data with weather information
       batchData.arrivalWeather = weatherData;
       
-      weatherLoading = false;
+      fetchingWeather = false;
     } catch (error) {
       console.error('Error fetching weather data:', error);
       weatherError = 'Failed to fetch weather data. Please try again.';
-      weatherLoading = false;
+      fetchingWeather = false;
     }
   }
   
@@ -258,12 +278,11 @@
    * Handle file uploads
    * @param {Event} event - The file input change event
    */
-  function handleFileUpload(event) {
-    const files = event.target.files;
+  function handleFileChange(event: Event): void {
+    const target = event.target as HTMLInputElement;
+    const files = target?.files;
     if (files) {
-      for (let i = 0; i < files.length; i++) {
-        uploadedFiles = [...uploadedFiles, files[i]];
-      }
+      uploadedFiles = Array.from(files);
     }
   }
   
@@ -271,7 +290,7 @@
    * Remove a file from the uploaded files list
    * @param {number} index - The index of the file to remove
    */
-  function removeFile(index) {
+  function removeFile(index: number): void {
     uploadedFiles = uploadedFiles.filter((_, i) => i !== index);
   }
   
@@ -280,7 +299,7 @@
    * @param {number} bytes - The file size in bytes
    * @returns {string} The formatted file size
    */
-  function formatFileSize(bytes) {
+  function formatFileSize(bytes: number): string {
     if (bytes === 0) return '0 Bytes';
     const k = 1024;
     const sizes = ['Bytes', 'KB', 'MB', 'GB'];
@@ -289,12 +308,13 @@
   }
   
   // Function to calculate days between dates
-  function calculateDays(start, end) {
+  function calculateDays(start: string, end: string): number {
     if (!start || !end) return batchData.cycleDays;
     const startDate = new Date(start);
     const endDate = new Date(end);
-    const diffTime = Math.abs(endDate - startDate);
-    return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    const diffTime = Math.abs(endDate.getTime() - startDate.getTime());
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return diffDays;
   }
   
   // Calculate cycle days when dates change
@@ -306,7 +326,7 @@
   }
   
   // Add a new vaccination
-  function addVaccination() {
+  function addVaccination(): void {
     batchData.vaccinationSchedule = [
       ...batchData.vaccinationSchedule,
       { name: '', dayNumber: 28, completed: false }
@@ -314,12 +334,12 @@
   }
   
   // Remove a vaccination
-  function removeVaccination(index) {
+  function removeVaccination(index: number): void {
     batchData.vaccinationSchedule = batchData.vaccinationSchedule.filter((_, i) => i !== index);
   }
   
   // Validate the form
-  function validateForm() {
+  function validateForm(): boolean {
     let isValid = true;
     
     // Reset errors
@@ -385,19 +405,19 @@
   }
   
   // Handle form submission
-  function handleSubmit() {
+  function handleSubmit(): void {
     if (validateForm()) {
       dispatch('submit', batchData);
     }
   }
   
   // Handle form cancellation
-  function handleCancel() {
+  function handleCancel(): void {
     dispatch('cancel');
   }
   
   // Update projected end date when start date or cycle days change manually
-  function updateProjectedEndDate() {
+  function updateProjectedEndDate(): void {
     if (batchData.startDate) {
       const startDate = new Date(batchData.startDate);
       startDate.setDate(startDate.getDate() + batchData.cycleDays);
@@ -533,27 +553,16 @@
           <div class="supplier-card">
             <div class="supplier-card-content">
               <div class="supplier-info">
-                <div class="supplier-info-item">
-                  <span class="material-icons">location_on</span>
-                  <span>{selectedSupplier.address}</span>
-                </div>
-                <div class="supplier-info-row">
-                  <div class="supplier-info-item">
-                    <span class="material-icons">phone</span>
-                    <span>{selectedSupplier.contact}</span>
-                  </div>
-                  <div class="supplier-info-item">
-                    <span class="material-icons">email</span>
-                    <span>{selectedSupplier.email}</span>
-                  </div>
-                </div>
-              </div>
-              <div class="travel-distance-compact">
-                <div class="distance-badge">
-                  <span class="material-icons">route</span>
-                  <span class="distance-value">{travelDistance} km</span>
-                </div>
-                <small>Distance from supplier to farm</small>
+                <p><strong>Address:</strong> {selectedSupplier.address}</p>
+                <p><strong>Distance:</strong> {travelDistance} km from your farm</p>
+                <p>
+                  <strong>Contact:</strong> 
+                  <a href="tel:{selectedSupplier.contact}">{selectedSupplier.contact}</a>
+                </p>
+                <p>
+                  <strong>Email:</strong> 
+                  <a href="mailto:{selectedSupplier.email}">{selectedSupplier.email}</a>
+                </p>
               </div>
             </div>
           </div>
@@ -709,7 +718,7 @@
         <div class="form-group">
           <label>Arrival Weather <small>(auto-collected)</small></label>
           
-          {#if weatherLoading}
+          {#if fetchingWeather}
             <div class="weather-card loading">
               <div class="weather-card-content">
                 <span class="material-icons rotating">sync</span>
@@ -799,18 +808,21 @@
         <p class="section-description">Upload relevant documents such as delivery notes, certificates, or invoices.</p>
         
         <div class="document-upload">
-          <div class="upload-area">
-            <label for="documentUpload" class="upload-label">
-              <span class="material-icons">upload_file</span>
-              <span>Click to upload or drag files here</span>
-            </label>
+          <div class="file-upload-container">
             <input 
               type="file" 
-              id="documentUpload" 
-              class="file-input" 
+              id="documentUpload"
               multiple
-              on:change={handleFileUpload}
+              on:change={handleFileChange}
+              class="file-input"
             />
+            <label for="documentUpload" class="file-upload-button">
+              <span class="material-icons">upload_file</span>
+              Choose Files
+            </label>
+            <span class="file-upload-text">
+              {uploadedFiles.length ? `${uploadedFiles.length} file(s) selected` : 'No files selected'}
+            </span>
           </div>
           
           {#if uploadedFiles.length > 0}
