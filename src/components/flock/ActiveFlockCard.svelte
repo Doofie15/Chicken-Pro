@@ -4,7 +4,42 @@
   // Calculate days remaining to target weight
   $: daysRemaining = Math.ceil((flock.targetWeight - flock.avgWeight) / (flock.avgWeight / flock.age));
   
-  // Format date for display
+  // Sample feed data - in a real app, this would come from the flock object
+  $: feedData = {
+    totalFeed: 12500 + (flock.age * 150), // Sample calculation in grams
+    dailyFeed: 250 + (flock.age * 0.5), // Sample calculation
+    feedType: flock.age < 21 ? 'Starter' : flock.age < 42 ? 'Grower' : 'Finisher',
+    feedCost: (12500 + (flock.age * 150)) * 0.45 / 1000, // Cost in currency units (per kg)
+    costPerBird: ((12500 + (flock.age * 150)) * 0.45 / 1000) / flock.currentCount
+  };
+  
+  /**
+   * Format weight values to display in kg when over 1000g
+   * @param {number} value - The weight value in grams
+   * @returns {string} Formatted weight string
+   */
+  function formatWeight(value) {
+    if (value >= 1000) {
+      return (value / 1000).toFixed(1) + 'kg';
+    } else {
+      return value + 'g';
+    }
+  }
+  
+  /**
+   * Format currency values
+   * @param {number} value - The currency value
+   * @returns {string} Formatted currency string
+   */
+  function formatCurrency(value) {
+    return '$' + value.toFixed(2);
+  }
+  
+  /**
+   * Format date for display
+   * @param {string} dateString - The date string to format
+   * @returns {string} Formatted date string
+   */
   function formatDate(dateString) {
     const date = new Date(dateString);
     return new Intl.DateTimeFormat('en-US', { 
@@ -15,273 +50,372 @@
   }
 </script>
 
-<div class="flock-card" class:warning={flock.status === 'warning'} class:danger={flock.status === 'danger'}>
-  
-  <div class="flock-content">
-    <div class="flock-header">
-      <div>
-        <h3 class="flock-name">{flock.name}</h3>
-        <p class="flock-id">{flock.id}</p>
-      </div>
-      <div class="flock-age">
-        <span class="age-value">{flock.age}</span>
-        <span class="age-label">days</span>
-      </div>
+<div class="flock-row" class:warning={flock.status === 'warning'} class:danger={flock.status === 'danger'}>
+  <!-- Batch info column -->
+  <div class="flock-cell batch-info">
+    <div class="batch-name-id">
+      <h3 class="batch-name">{flock.name}</h3>
+      <span class="batch-id">{flock.id}</span>
     </div>
-    
-    <div class="flock-progress">
-      <div class="progress-info">
-        <span>Growth Progress</span>
-        <span>{flock.progress}%</span>
-      </div>
+  </div>
+  
+  <!-- Age column -->
+  <div class="flock-cell age-cell">
+    <div class="age-badge">
+      <span class="age-value">{flock.age}</span>
+      <span class="age-label">days</span>
+    </div>
+  </div>
+  
+  <!-- Progress column -->
+  <div class="flock-cell progress-cell">
+    <div class="progress-container">
       <div class="progress-bar">
         <div class="progress-fill" style="width: {flock.progress}%"></div>
       </div>
+      <div class="progress-value">{flock.progress}%</div>
     </div>
-    
-    <div class="flock-stats">
-      <div class="stat">
-        <span class="stat-label">Birds</span>
-        <span class="stat-value">{flock.currentCount.toLocaleString()}</span>
-        <span class="stat-secondary">of {flock.initialCount.toLocaleString()}</span>
+  </div>
+  
+  <!-- Birds column -->
+  <div class="flock-cell metric-cell">
+    <span class="metric-value">{flock.currentCount.toLocaleString()}</span>
+    <span class="metric-label">Birds</span>
+  </div>
+  
+  <!-- Weight column -->
+  <div class="flock-cell metric-cell">
+    <span class="metric-value">{formatWeight(flock.avgWeight)}</span>
+    <span class="metric-label">Weight</span>
+  </div>
+  
+  <!-- FCR column -->
+  <div class="flock-cell metric-cell">
+    <span class="metric-value">{flock.feedConversion}</span>
+    <span class="metric-label">FCR</span>
+  </div>
+  
+  <!-- Mortality column -->
+  <div class="flock-cell metric-cell">
+    <span class="metric-value">{flock.mortality}%</span>
+    <span class="metric-label">Mortality</span>
+  </div>
+  
+  <!-- Feed column -->
+  <div class="flock-cell feed-cell">
+    <div class="feed-cards">
+      <div class="feed-card">
+        <span class="feed-value">{(feedData.totalFeed / 1000).toFixed(1)}kg</span>
+        <span class="feed-label">Total Feed</span>
       </div>
-      
-      <div class="stat">
-        <span class="stat-label">Weight</span>
-        <span class="stat-value">{flock.avgWeight}g</span>
-        <span class="stat-secondary">target: {flock.targetWeight}g</span>
+      <div class="feed-card">
+        <span class="feed-value">{formatCurrency(feedData.feedCost)}</span>
+        <span class="feed-label">Feed Cost</span>
       </div>
-      
-      <div class="stat">
-        <span class="stat-label">FCR</span>
-        <span class="stat-value">{flock.feedConversion}</span>
-        <span class="stat-secondary">
-          {flock.feedConversion < 1.7 ? 'Excellent' : flock.feedConversion < 1.8 ? 'Good' : 'Fair'}
-        </span>
+      <div class="feed-card">
+        <span class="feed-value">{formatCurrency(feedData.costPerBird)}</span>
+        <span class="feed-label">Cost/Bird</span>
       </div>
     </div>
-    
-    <div class="flock-footer">
-      <div class="flock-date">
-        <span class="material-icons">calendar_today</span>
-        Started: {formatDate(flock.startDate)}
-      </div>
-      
-      <div class="flock-actions">
-        <button class="btn-icon">
-          <span class="material-icons">edit</span>
-        </button>
-        <button class="btn-icon">
-          <span class="material-icons">visibility</span>
-        </button>
-        <button class="btn-icon">
-          <span class="material-icons">more_vert</span>
-        </button>
-      </div>
-    </div>
-    
+  </div>
+  
+  <!-- Forecast column -->
+  <div class="flock-cell forecast-cell">
     {#if daysRemaining > 0}
-      <div class="flock-forecast">
+      <div class="forecast-badge">
         <span class="material-icons">schedule</span>
-        Estimated {daysRemaining} days to target weight
+        <span>{daysRemaining}d</span>
       </div>
     {:else}
-      <div class="flock-forecast ready">
-        <span class="material-icons">check_circle</span>
-        Ready for harvest
+      <div class="ready-status">
+        <div class="ready-pulse"></div>
+        <span class="ready-text">Ready for Slaughter</span>
       </div>
     {/if}
+  </div>
+  
+  <!-- Actions column -->
+  <div class="flock-cell actions-cell">
+    <div class="action-buttons">
+      <button class="btn-icon" title="Edit">
+        <span class="material-icons">edit</span>
+      </button>
+      <button class="btn-icon" title="View Details">
+        <span class="material-icons">visibility</span>
+      </button>
+      <button class="btn-icon" title="More Options">
+        <span class="material-icons">more_vert</span>
+      </button>
+    </div>
   </div>
 </div>
 
 <style>
-  .flock-card {
+  .flock-row {
     display: flex;
-    border-radius: 8px;
-    overflow: hidden;
-    margin-bottom: 16px;
-    position: relative;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-    transition: transform 0.2s, box-shadow 0.2s;
-  }
-  
-  .flock-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
-  }
-  
-  .flock-card:last-child {
-    margin-bottom: 0;
-  }
-  
-  .flock-card.warning {
-    border-left: 4px solid var(--warning);
-  }
-  
-  .flock-card.danger {
-    border-left: 4px solid var(--danger);
-  }
-  
-
-  
-  .flock-content {
-    flex: 1;
-    padding: 16px 20px;
-    position: relative;
-    background-color: white;
-    border-radius: 8px;
-  }
-  
-  .flock-header {
-    display: flex;
-    justify-content: space-between;
     align-items: center;
-    margin-bottom: 16px;
+    background-color: white;
+    border-radius: 4px;
+    margin-bottom: 8px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    transition: transform 0.15s, box-shadow 0.15s;
+    height: 60px;
+    position: relative;
+    width: 100%;
   }
   
-  .flock-name {
+  .flock-row:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    background-color: #fafafa;
+  }
+  
+  .flock-row.warning {
+    border-left: 3px solid var(--warning);
+  }
+  
+  .flock-row.danger {
+    border-left: 3px solid var(--danger);
+  }
+  
+  .flock-cell {
+    padding: 0 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100%;
+  }
+  
+  .batch-info {
+    flex: 0 0 160px;
+    padding-left: 16px;
+  }
+  
+  .batch-name-id {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .batch-name {
     margin: 0;
-    font-size: 20px;
+    font-size: 14px;
     font-weight: 600;
     color: var(--dark);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
   
-  .flock-id {
-    margin: 4px 0 0;
-    font-size: 13px;
+  .batch-id {
+    font-size: 11px;
     color: var(--gray);
     font-weight: 500;
   }
   
-  .flock-age {
+  .age-cell {
+    flex: 0 0 60px;
+  }
+  
+  .age-badge {
     background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
     color: white;
-    border-radius: 6px;
-    padding: 8px 12px;
+    border-radius: 4px;
+    padding: 4px 8px;
     text-align: center;
-    min-width: 60px;
-    box-shadow: 0 2px 4px rgba(25, 118, 210, 0.2);
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 45px;
   }
   
   .age-value {
-    font-size: 22px;
+    font-size: 16px;
     font-weight: 700;
-    display: block;
     line-height: 1;
   }
   
   .age-label {
-    font-size: 11px;
+    font-size: 9px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
     margin-top: 2px;
     font-weight: 500;
   }
   
-  .flock-progress {
-    margin-bottom: 20px;
+  .progress-cell {
+    flex: 0 0 100px;
   }
   
-  .progress-info {
+  .progress-container {
     display: flex;
-    justify-content: space-between;
-    margin-bottom: 6px;
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--dark);
+    flex-direction: column;
+    gap: 4px;
   }
   
   .progress-bar {
-    height: 8px;
+    height: 5px;
     background-color: #f0f0f0;
-    border-radius: 4px;
+    border-radius: 3px;
     overflow: hidden;
-    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
+    width: 100%;
   }
   
   .progress-fill {
     height: 100%;
     background: linear-gradient(90deg, var(--primary) 0%, var(--primary-light) 100%);
-    border-radius: 4px;
+    border-radius: 3px;
     transition: width 0.5s ease;
   }
   
-  .flock-stats {
-    display: flex;
-    margin-bottom: 20px;
-    background-color: #f9f9f9;
-    border-radius: 8px;
-    padding: 12px;
-  }
-  
-  .stat {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    padding: 0 8px;
-    position: relative;
-  }
-  
-  .stat:not(:last-child):after {
-    content: '';
-    position: absolute;
-    right: 0;
-    top: 10%;
-    height: 80%;
-    width: 1px;
-    background-color: #e0e0e0;
-  }
-  
-  .stat-label {
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--gray);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin-bottom: 6px;
-  }
-  
-  .stat-value {
-    font-size: 18px;
+  .progress-value {
+    font-size: 11px;
     font-weight: 600;
     color: var(--dark);
-    margin-bottom: 4px;
+    text-align: right;
   }
   
-  .stat-secondary {
-    font-size: 12px;
-    color: var(--gray);
+  .metric-cell {
+    flex: 1 1 80px;
+    text-align: center;
   }
   
-  .flock-footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  
-  .flock-date {
-    display: flex;
-    align-items: center;
-    font-size: 12px;
-    color: var(--gray);
-  }
-  
-  .flock-date .material-icons {
+  .metric-value {
     font-size: 14px;
-    margin-right: 4px;
+    font-weight: 600;
+    color: var(--dark);
+    display: block;
   }
   
-  .flock-actions {
+  .metric-label {
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--gray);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+  
+  .feed-cell {
+    flex: 1 1 180px;
+    text-align: left;
+  }
+  
+  .feed-cards {
     display: flex;
+    gap: 6px;
+  }
+  
+  .feed-card {
+    display: flex;
+    flex-direction: column;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+    padding: 4px 8px;
+    min-width: 55px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    text-align: center;
+  }
+  
+  .feed-value {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--dark);
+    line-height: 1.2;
+  }
+  
+  .feed-label {
+    font-size: 9px;
+    font-weight: 500;
+    color: var(--primary);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+  
+  .forecast-cell {
+    flex: 0 0 90px;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .forecast-badge {
+    display: inline-flex;
+    align-items: center;
+    background-color: #f0f0f0;
+    border-radius: 4px;
+    padding: 4px 8px;
     gap: 4px;
   }
   
-  .btn-icon {
-    width: 32px;
-    height: 32px;
+  .forecast-badge .material-icons {
+    font-size: 14px;
+  }
+  
+  .ready-status {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .ready-pulse {
+    width: 12px;
+    height: 12px;
     border-radius: 50%;
+    background-color: var(--success);
+    position: relative;
+    margin-bottom: 4px;
+  }
+  
+  .ready-pulse::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background-color: var(--success);
+    opacity: 0.7;
+    animation: pulse 2s infinite;
+    top: 0;
+    left: 0;
+  }
+  
+  .ready-text {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--success);
+    white-space: nowrap;
+  }
+  
+  @keyframes pulse {
+    0% {
+      transform: scale(1);
+      opacity: 0.7;
+    }
+    70% {
+      transform: scale(2);
+      opacity: 0;
+    }
+    100% {
+      transform: scale(1);
+      opacity: 0;
+    }
+  }
+  
+  .actions-cell {
+    flex: 0 0 90px;
+  }
+  
+  .action-buttons {
+    display: flex;
+    gap: 2px;
+    justify-content: center;
+  }
+  
+  .btn-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 4px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -297,49 +431,96 @@
     color: var(--dark);
   }
   
-  .flock-forecast {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--gray);
-    margin-top: 12px;
-    background-color: #f5f5f5;
-    padding: 10px;
-    border-radius: 6px;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-  }
-  
-  .flock-forecast.ready {
-    color: white;
-    background: linear-gradient(90deg, var(--success) 0%, var(--success-light) 100%);
-  }
-  
-  .flock-forecast .material-icons {
+  .btn-icon .material-icons {
     font-size: 16px;
-    margin-right: 6px;
+  }
+  
+  @media (max-width: 992px) {
+    .flock-row {
+      flex-wrap: wrap;
+      height: auto;
+      padding: 10px 0;
+      width: 100%;
+    }
+    
+    .batch-info {
+      flex: 1 0 50%;
+      order: 1;
+    }
+    
+    .age-cell {
+      flex: 0 0 auto;
+      order: 2;
+    }
+    
+    .actions-cell {
+      flex: 0 0 auto;
+      order: 3;
+      margin-left: auto;
+    }
+    
+    .progress-cell {
+      flex: 1 0 100%;
+      order: 4;
+      padding-top: 8px;
+      padding-bottom: 8px;
+    }
+    
+    .metric-cell {
+      flex: 1 0 25%;
+      order: 5;
+    }
+    
+    .feed-cell {
+      flex: 1 0 100%;
+      order: 6;
+      text-align: center;
+      padding-top: 8px;
+      padding-bottom: 8px;
+    }
+    
+    .feed-cards {
+      justify-content: center;
+    }
+    
+    .forecast-cell {
+      flex: 1 0 100%;
+      order: 7;
+      text-align: center;
+      padding-top: 8px;
+      padding-bottom: 8px;
+    }
+    
+    .ready-status {
+      flex-direction: row;
+      gap: 8px;
+      justify-content: center;
+    }
+    
+    .ready-pulse {
+      margin-bottom: 0;
+    }
   }
   
   @media (max-width: 576px) {
-    .flock-card {
-      flex-direction: column;
+    .metric-cell {
+      flex: 1 0 50%;
+      padding: 6px 10px;
     }
     
-    .flock-image {
+    .feed-cell {
+      flex: 1 0 100%;
+      padding: 6px 10px;
+    }
+    
+    .feed-cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+    
+    .feed-card {
       width: 100%;
-      height: 120px;
-    }
-    
-    .flock-footer {
-      margin-bottom: 24px;
-    }
-    
-    .flock-forecast {
-      position: relative;
-      bottom: auto;
-      right: auto;
-      margin-top: 12px;
     }
   }
 </style>

@@ -2,6 +2,13 @@
 
 A comprehensive management system for broiler farms, built with SvelteKit, Bootstrap, and Material UI. BroilerPro helps farm managers track flocks, manage customers, monitor finances, analyze performance, track feed inventory, monitor mortality, and analyze market prices in one unified platform.
 
+## Latest Updates (April 2025)
+
+- **Enhanced Batch Management Form**: Streamlined form with improved supplier and weather information cards
+- **Automatic Weather Data Collection**: Weather conditions are now automatically recorded upon batch creation
+- **Supplier Distance Calculation**: Travel distance from suppliers is now calculated and displayed for analysis
+- **Required Fields Validation**: Clear marking of mandatory fields with improved validation
+
 ![BroilerPro Dashboard](docs/screenshots/dashboard.png)
 
 ## Key Features
@@ -19,11 +26,13 @@ A comprehensive management system for broiler farms, built with SvelteKit, Boots
 ### Flock Management
 - Detailed view of active flocks
 - Growth tracking and performance metrics
-- Batch-based organization
+- Batch-based organization with streamlined data entry
 - Quick actions for feed and mortality logging
 - Mortality rate monitoring
 - Feed conversion ratio analysis
 - Filtering and sorting capabilities
+- Automatic weather data collection for performance correlation
+- Supplier distance tracking for logistics analysis
 
 ### Customer Relationship Management
 - Customer profiles with contact information
