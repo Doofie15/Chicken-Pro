@@ -516,8 +516,8 @@
         <div class="section-content">
           <div class="form-row">
             <div class="form-group">
-              <label>Customer Type</label>
-              <div class="radio-group">
+              <label id="customer-type-label" for="customer-type-group">Customer Type</label>
+              <div class="radio-group" id="customer-type-group" aria-labelledby="customer-type-label">
                 <label class="radio-label">
                   <input type="radio" name="type" value="individual" bind:group={customerData.type}>
                   <span>Individual</span>
@@ -530,8 +530,8 @@
             </div>
             
             <div class="form-group">
-              <label for="customerCategory">Category</label>
-              <select id="customerCategory" class="form-control" bind:value={customerData.customerType}>
+              <label id="customer-category-label" for="customer-category-group">Customer Category</label>
+              <select id="customer-category-group" class="form-control" bind:value={customerData.customerType}>
                 {#each customerTypes as type}
                   <option value={type}>{type}</option>
                 {/each}
@@ -1110,7 +1110,7 @@
 
 <style>
   .customer-form-container {
-    max-width: 1000px;
+    max-width: 95%;
     margin: 0 auto;
     padding: 20px;
   }
@@ -1176,25 +1176,19 @@
   }
   
   .section-content {
-    padding: 24px;
+    padding: 24px 30px;
   }
   
   .form-row {
     display: flex;
-    gap: 16px;
-    margin-bottom: 16px;
-  }
-  
-  @media (max-width: 768px) {
-    .form-row {
-      flex-direction: column;
-      gap: 0;
-    }
+    flex-wrap: wrap;
+    gap: 24px;
+    margin-bottom: 20px;
   }
   
   .form-group {
-    flex: 1;
-    margin-bottom: 16px;
+    flex: 1 1 350px;
+    margin-bottom: 20px;
   }
   
   .map-container {
@@ -1249,19 +1243,19 @@
     margin-top: 4px;
   }
   
-  .radio-group, .checkbox-group {
+  .radio-group {
     display: flex;
     gap: 16px;
   }
   
-  .radio-label, .checkbox-label {
+  .radio-label {
     display: flex;
     align-items: center;
     cursor: pointer;
     font-weight: normal;
   }
   
-  .radio-label input, .checkbox-label input {
+  .radio-label input {
     margin-right: 8px;
   }
   
@@ -1331,43 +1325,6 @@
     color: #777;
     font-style: italic;
     margin-top: 10px;
-  }
-  
-  .file-input {
-    position: absolute;
-    width: 0.1px;
-    height: 0.1px;
-    opacity: 0;
-    overflow: hidden;
-    z-index: -1;
-  }
-  
-  .file-upload-button {
-    display: inline-flex;
-    align-items: center;
-    padding: 8px 16px;
-    background-color: #f8f9fa;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 14px;
-    transition: all 0.2s;
-  }
-  
-  .file-upload-button:hover {
-    background-color: #e9ecef;
-  }
-  
-  .file-upload-button .material-icons {
-    margin-right: 8px;
-    font-size: 18px;
-  }
-  
-  .file-upload-text {
-    display: block;
-    margin-top: 8px;
-    font-size: 14px;
-    color: var(--gray);
   }
   
   .form-actions {

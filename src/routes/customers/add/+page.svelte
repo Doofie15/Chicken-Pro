@@ -1,10 +1,10 @@
-<script>
+<script lang="ts">
   import { onMount } from 'svelte';
   import { goto } from '$app/navigation';
   import CustomerForm from '../../../components/customers/CustomerForm.svelte';
   
   // Handle form submission
-  function handleSubmit(event) {
+  function handleSubmit(event: CustomEvent) {
     const customerData = event.detail;
     console.log('New customer created:', customerData);
     
@@ -121,7 +121,7 @@
   }
   
   .page-content {
-    max-width: 1000px;
+    max-width: 95%;
     margin: 0 auto;
   }
 </style>

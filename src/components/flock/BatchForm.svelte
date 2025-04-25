@@ -716,10 +716,10 @@
         </div>
         
         <div class="form-group">
-          <label>Arrival Weather <small>(auto-collected)</small></label>
+          <label id="arrival-weather-label" for="weather-display">Arrival Weather <small>(auto-collected)</small></label>
           
           {#if fetchingWeather}
-            <div class="weather-card loading">
+            <div class="weather-card loading" id="weather-display" aria-labelledby="arrival-weather-label">
               <div class="weather-card-content">
                 <span class="material-icons rotating">sync</span>
                 <span>Loading weather data...</span>
@@ -738,7 +738,7 @@
               </div>
             </div>
           {:else if batchData.arrivalWeather.temperature > 0}
-            <div class="weather-card">
+            <div class="weather-card" id="weather-display" aria-labelledby="arrival-weather-label">
               <div class="weather-card-content">
                 <div class="weather-info">
                   <div class="weather-badges">
@@ -960,12 +960,6 @@
     font-size: 14px;
   }
   
-  .form-sections {
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
-  }
-  
   .form-section {
     background-color: #f9f9f9;
     border-radius: 8px;
@@ -996,12 +990,6 @@
     min-width: 200px;
   }
   
-  .action-group {
-    flex: 0 0 auto;
-    min-width: auto;
-    align-self: flex-end;
-  }
-  
   label {
     display: block;
     margin-bottom: 6px;
@@ -1010,7 +998,7 @@
     color: var(--dark);
   }
   
-  .form-control, .form-select {
+  .form-control {
     width: 100%;
     padding: 10px 12px;
     border: 1px solid #ddd;
@@ -1019,7 +1007,7 @@
     transition: border-color 0.2s;
   }
   
-  .form-control:focus, .form-select:focus {
+  .form-control:focus {
     border-color: var(--primary);
     outline: none;
     box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.1);
@@ -1053,10 +1041,6 @@
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
   }
   
-  .vaccination-item .form-row {
-    margin-bottom: 0;
-  }
-  
   .vaccination-details {
     display: flex;
     gap: 10px;
@@ -1072,34 +1056,6 @@
   
   .document-upload {
     margin-top: 15px;
-  }
-  
-  .upload-area {
-    border: 2px dashed #ccc;
-    border-radius: 5px;
-    padding: 30px;
-    text-align: center;
-    margin-bottom: 20px;
-    cursor: pointer;
-    transition: border-color 0.3s;
-  }
-  
-  .upload-area:hover {
-    border-color: #007bff;
-  }
-  
-  .upload-label {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
-    cursor: pointer;
-    width: 100%;
-  }
-  
-  .upload-label .material-icons {
-    font-size: 48px;
-    color: #6c757d;
   }
   
   .file-input {
@@ -1162,52 +1118,11 @@
     gap: 8px;
   }
   
-  .supplier-info-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 16px;
-  }
+  /* Removed unused supplier-info selectors */
   
-  .supplier-info-item {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 0.9rem;
-  }
+  /* Removed unused distance-related selectors */
   
-  .supplier-info-item .material-icons {
-    font-size: 16px;
-    color: #6c757d;
-  }
-  
-  .travel-distance-compact {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    margin-top: 8px;
-    padding-top: 8px;
-    border-top: 1px dashed #e0e0e0;
-  }
-  
-  .distance-badge {
-    display: inline-flex;
-    align-items: center;
-    background-color: #e6f2ff;
-    color: #007bff;
-    padding: 4px 8px;
-    border-radius: 16px;
-    font-weight: 500;
-    gap: 4px;
-    margin-bottom: 4px;
-  }
-  
-  .distance-badge .material-icons {
-    font-size: 16px;
-  }
-  
-  .distance-value {
-    font-weight: 600;
-  }
+  /* Removed unused .distance-value selector */
   
   @media (min-width: 768px) {
     .supplier-card-content {
@@ -1216,14 +1131,7 @@
       align-items: center;
     }
     
-    .travel-distance-compact {
-      margin-top: 0;
-      padding-top: 0;
-      border-top: none;
-      border-left: 1px dashed #e0e0e0;
-      padding-left: 16px;
-      min-width: 150px;
-    }
+    /* Removed unused .travel-distance-compact selector */
   }
   
   .weather-card {

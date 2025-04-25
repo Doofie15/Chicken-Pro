@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import { onMount } from 'svelte';
   import { goto } from '$app/navigation';
   
@@ -111,11 +111,34 @@
     showRegistrationModal = false;
   }
   
+  let searchQuery = '';
   let filterType = 'all';
   let filterStatus = 'all';
-  let searchQuery = '';
-  let sortBy = 'name';
-  let sortOrder = 'asc';
+  let sortBy = 'lastOrder';
+  let sortOrder = 'desc';
+  let selectedCustomer: Customer | null = null;
+  let showCustomerModal = false;
+  
+  // Define a customer type for TypeScript
+  type Customer = {
+    id: string;
+    name: string;
+    contactPerson: string;
+    email: string;
+    phone: string;
+    address: string;
+    type: string;
+    status: string;
+    lastOrder: string;
+    totalOrders: number;
+    totalSpend: number;
+    image: string;
+  };
+  
+  function showCustomerDetails(customer: Customer) {
+    selectedCustomer = customer;
+    showCustomerModal = true;
+  }
   
   $: filteredCustomers = customers
     .filter(customer => {
@@ -135,7 +158,7 @@
       return 0;
     });
     
-  function handleSort(field) {
+  function handleSort(field: string) {
     if (sortBy === field) {
       sortOrder = sortOrder === 'asc' ? 'desc' : 'asc';
     } else {
@@ -144,15 +167,15 @@
     }
   }
   
-  function formatCurrency(value) {
+  function formatCurrency(value: number) {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
-      currency: 'USD',
+      currency: 'ZAR',
       minimumFractionDigits: 0
     }).format(value);
   }
   
-  function formatDate(dateString) {
+  function formatDate(dateString: string) {
     const date = new Date(dateString);
     return new Intl.DateTimeFormat('en-US', { 
       month: 'short', 
@@ -243,8 +266,8 @@
     
     <div class="filter-actions">
       <div class="filter-group">
-        <label>Type:</label>
-        <select class="form-select" bind:value={filterType}>
+        <label for="filter-type">Type:</label>
+        <select id="filter-type" class="form-select" bind:value={filterType}>
           <option value="all">All Types</option>
           <option value="Retailer">Retailer</option>
           <option value="Wholesaler">Wholesaler</option>
@@ -253,8 +276,8 @@
       </div>
       
       <div class="filter-group">
-        <label>Status:</label>
-        <select class="form-select" bind:value={filterStatus}>
+        <label for="filter-status">Status:</label>
+        <select id="filter-status" class="form-select" bind:value={filterStatus}>
           <option value="all">All Statuses</option>
           <option value="active">Active</option>
           <option value="inactive">Inactive</option>
@@ -322,11 +345,12 @@
                 <tr>
                   <td>
                     <div class="customer-info">
-                      <div class="customer-avatar">
-                        <img src={customer.image} alt={customer.name} />
-                      </div>
                       <div class="customer-details">
-                        <h4 class="customer-name">{customer.name}</h4>
+                        <h4 class="customer-name">
+                          <a href="/customers/{customer.id}" class="name-link">
+                            {customer.name}
+                          </a>
+                        </h4>
                         <p class="customer-type">{customer.type} • {customer.id}</p>
                       </div>
                     </div>
@@ -361,6 +385,83 @@
     </div>
   </div>
 </div>
+
+<!-- Customer Details Modal -->
+{#if showCustomerModal && selectedCustomer}
+<div class="modal-overlay">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 class="modal-title">Customer Details</h3>
+      <button class="modal-close" on:click={() => showCustomerModal = false}>
+        <span class="material-icons">close</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="customer-detail-card">
+        <div class="customer-detail-header">
+          <h4>{selectedCustomer.name}</h4>
+          <span class="badge badge-{selectedCustomer.status}">{selectedCustomer.status}</span>
+        </div>
+        
+        <div class="detail-section">
+          <h5>Contact Information</h5>
+          <div class="detail-row">
+            <div class="detail-label">Contact Person:</div>
+            <div class="detail-value">{selectedCustomer.contactPerson}</div>
+          </div>
+          <div class="detail-row">
+            <div class="detail-label">Email:</div>
+            <div class="detail-value">{selectedCustomer.email}</div>
+          </div>
+          <div class="detail-row">
+            <div class="detail-label">Phone:</div>
+            <div class="detail-value">{selectedCustomer.phone}</div>
+          </div>
+        </div>
+        
+        <div class="detail-section">
+          <h5>Business Information</h5>
+          <div class="detail-row">
+            <div class="detail-label">Customer ID:</div>
+            <div class="detail-value">{selectedCustomer.id}</div>
+          </div>
+          <div class="detail-row">
+            <div class="detail-label">Type:</div>
+            <div class="detail-value">{selectedCustomer.type}</div>
+          </div>
+          <div class="detail-row">
+            <div class="detail-label">Address:</div>
+            <div class="detail-value">{selectedCustomer.address}</div>
+          </div>
+        </div>
+        
+        <div class="detail-section">
+          <h5>Order History</h5>
+          <div class="detail-row">
+            <div class="detail-label">Last Order:</div>
+            <div class="detail-value">{formatDate(selectedCustomer.lastOrder)}</div>
+          </div>
+          <div class="detail-row">
+            <div class="detail-label">Total Orders:</div>
+            <div class="detail-value">{selectedCustomer.totalOrders}</div>
+          </div>
+          <div class="detail-row">
+            <div class="detail-label">Total Spend:</div>
+            <div class="detail-value">{formatCurrency(selectedCustomer.totalSpend)}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline-secondary" on:click={() => showCustomerModal = false}>Close</button>
+      <button class="btn btn-primary" on:click={() => selectedCustomer && goto(`/customers/edit/${selectedCustomer.id}`)}>
+        <span class="material-icons">edit</span>
+        Edit Customer
+      </button>
+    </div>
+  </div>
+</div>
+{/if}
 
 <!-- Registration Link Modal -->
 {#if showRegistrationModal}
@@ -434,12 +535,15 @@
     grid-template-columns: repeat(4, 1fr);
     gap: 16px;
     margin-bottom: 24px;
+    max-width: 95%;
+    margin-left: auto;
+    margin-right: auto;
   }
   
   .stat-card {
     background-color: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
     padding: 16px;
     display: flex;
     align-items: center;
@@ -489,11 +593,14 @@
     justify-content: space-between;
     margin-bottom: 16px;
     background-color: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
     padding: 16px;
     flex-wrap: wrap;
     gap: 16px;
+    max-width: 95%;
+    margin-left: auto;
+    margin-right: auto;
   }
   
   .search-box {
@@ -556,6 +663,16 @@
   
   .customers-list {
     margin-bottom: 24px;
+    max-width: 95%;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
+  .card {
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
   }
   
   .table {
@@ -595,18 +712,21 @@
     align-items: center;
   }
   
-  .customer-avatar {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    overflow: hidden;
-    margin-right: 12px;
+  .name-link {
+    background: none;
+    border: none;
+    padding: 0;
+    color: var(--primary);
+    font-weight: 500;
+    font-size: 14px;
+    cursor: pointer;
+    text-align: left;
+    transition: color 0.2s;
   }
   
-  .customer-avatar img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+  .name-link:hover {
+    color: var(--primary-dark);
+    text-decoration: underline;
   }
   
   .customer-details {
@@ -738,13 +858,79 @@
   }
   
   .modal-body {
-    padding: 20px;
+    padding: 16px;
+  }
+  
+  .customer-detail-card {
+    background-color: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  
+  .customer-detail-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px;
+    border-bottom: 1px solid #eee;
+  }
+  
+  .customer-detail-header h4 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+  }
+  
+  .detail-section {
+    padding: 16px;
+    border-bottom: 1px solid #eee;
+  }
+  
+  .detail-section h5 {
+    margin: 0 0 12px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--gray);
+  }
+  
+  .detail-row {
+    display: flex;
+    margin-bottom: 8px;
+  }
+  
+  .detail-label {
+    width: 140px;
+    font-weight: 500;
+    color: var(--gray-dark);
+    font-size: 14px;
+  }
+  
+  .detail-value {
+    flex: 1;
+    font-size: 14px;
+  }
+  
+  .badge {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+  }
+  
+  .badge-active {
+    background-color: #e6f7e6;
+    color: #2e7d32;
+  }
+  
+  .badge-inactive {
+    background-color: #f5f5f5;
+    color: #757575;
   }
   
   .modal-footer {
     padding: 16px 20px;
     border-top: 1px solid #e0e0e0;
-    display: flex;
     justify-content: flex-end;
   }
   

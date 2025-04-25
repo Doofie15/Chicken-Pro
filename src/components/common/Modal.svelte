@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import { createEventDispatcher, onMount } from 'svelte';
   
   export let show = false;
@@ -12,13 +12,13 @@
     dispatch('close');
   }
   
-  function handleBackdropClick(event) {
+  function handleBackdropClick(event: MouseEvent) {
     if (closeOnBackdropClick && event.target === event.currentTarget) {
       close();
     }
   }
   
-  function handleKeydown(event) {
+  function handleKeydown(event: KeyboardEvent) {
     if (event.key === 'Escape') {
       close();
     }
@@ -34,10 +34,23 @@
 </script>
 
 {#if show}
-  <div class="modal-backdrop" on:click={handleBackdropClick}>
-    <div class="modal-container {size}">
+  <div 
+    class="modal-backdrop" 
+    role="dialog" 
+    aria-modal="true" 
+    aria-labelledby="modal-title"
+  >
+    <!-- Separate interactive element for the backdrop click handler -->
+    <button 
+      class="backdrop-button" 
+      on:click={handleBackdropClick} 
+      aria-label="Close modal"
+    ></button>
+    <div 
+      class="modal-container {size}" 
+      role="document">
       <div class="modal-header">
-        <h2 class="modal-title">{title}</h2>
+        <h2 id="modal-title" class="modal-title">{title}</h2>
         <button class="modal-close" on:click={close}>
           <span class="material-icons">close</span>
         </button>
@@ -56,13 +69,25 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(0, 0, 0, 0.5);
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 1000;
     padding: 20px;
     overflow-y: auto;
+  }
+  
+  .backdrop-button {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    border: none;
+    cursor: pointer;
+    margin: 0;
+    padding: 0;
   }
   
   .modal-container {

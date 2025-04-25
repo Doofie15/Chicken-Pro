@@ -504,8 +504,8 @@
             <h3 class="section-title">Customer Type</h3>
             
             <div class="form-group">
-              <label>Customer Type</label>
-              <div class="radio-group">
+              <label id="reg-customer-type-label" for="reg-customer-type-group">Customer Type</label>
+              <div class="radio-group" id="reg-customer-type-group" aria-labelledby="reg-customer-type-label">
                 <label class="radio-label">
                   <input type="radio" name="type" value="individual" bind:group={customerData.type}>
                   <span>Individual</span>
@@ -956,10 +956,11 @@
   
   .register-container {
     width: 100%;
-    max-width: 800px;
+    max-width: 95%;
+    margin: 0 auto;
     background-color: white;
     border-radius: 8px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     overflow: hidden;
   }
   
@@ -1131,7 +1132,7 @@
     margin-top: 4px;
   }
   
-  .radio-group, .checkbox-group {
+  .radio-group {
     margin-bottom: 1rem;
   }
   
